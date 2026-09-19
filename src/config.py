@@ -28,6 +28,7 @@ PROCESSING_REPORT_FILE = PROCESSED_DIR / "processing_report.json"
 # Señal y segmentación
 # Frecuencia de muestreo en Hz
 FS = 256
+# según nyquist con 256 muestras puedo representar máx 128 Hz, pero mi pasabanda llega a 50Hz así q no tengo riesgo de aliasing
 # Duración de cada ventana de análisis (segundos). 5.12 * 256 = 1310.72.
 WIN_SECONDS = 5.12
 # Muestras por ventana: redondeamos HACIA ABAJO -> 1310 (par).
@@ -48,11 +49,16 @@ HIGH_FREQ = 50.0
 # Orden del filtro Butterworth (5 es un buen compromiso entre pendiente y estabilidad numérica).
 FILTER_ORDER = 5 #q tan "bruscamente" se corta la señal
 
-# Estandarización por canal (estadísticas calculadas SOLO sobre TRAIN)
-#  z-score= (x - mu) / sigma.
-#  Estándar en pipelines de EEG (MNE/Braindecode). Conserva la forma de la distribución, solo reescala Es más
-#  robusta a outliers (artefactos del EEG) que la normalización
-SCALER = "zscore" #como opcional puedo poner minmax
+# Escalado robusto por canal (RobustScaler de scikit-learn).
+#  x' = (x - mediana_c) / IQR_c   con IQR = Q75 - Q25 (rango intercuartílico).
+SCALER = "robust"
+
+# Rango de cuantiles del RobustScaler (defaults de scikit-learn)
+ROBUST_QUANTILE_RANGE = (25.0, 75.0)
+
+# Submuestreo para estimar mediana/IQR sobre TODAS las ventanas de train sin guardarlas
+STATS_WINDOW_STRIDE = 16
+STATS_SAMPLE_STRIDE = 16
 
 
 # Canales compatibles con el dataset TUEV por si se implementa transfer learning

@@ -35,14 +35,13 @@ ia-final/
 ├── data/
 │   └── processed/               <- split.json, ventanas generadas, stats
 ├── models/                      <- checkpoints (.pt) del modelo
-├── notebooks/                   <- exploración / documentación de splits
-├── teorico/                     <- material teórico de referencia
+├── notebooks/                   <- exploración
 └── src/
     ├── __init__.py
     ├── config.py                <- configuración centralizada
     ├── annotations.py           <- parser de chbXX-summary.txt (anotaciones)
-    ├── preprocessing.py         <- carga EDF, filtrado, ventaneo, etiquetado, z-score
-    ├── data.py                  <- Dataset/DataLoader PyTorch (con balanceo de train)
+    ├── preprocessing.py         <- carga EDF, filtrado, ventaneo, etiquetado, escalado robusto (mediana + IQR)
+    ├── data.py                  <- Dataset/DataLoader PyTorch
     ├── model.py                 <- arquitectura CNN-1D apilada
     ├── train.py                 <- loop de entrenamiento + métricas + checkpoint
     ├── evaluate.py              <- evaluación inter-paciente (test completo)

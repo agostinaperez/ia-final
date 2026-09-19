@@ -1,3 +1,4 @@
 mne==1.13.2
 numpy==2.4.4
 scipy==1.17.1
+scikit-learn==1.9.1

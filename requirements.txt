@@ -2,3 +2,8 @@ mne==1.13.2
 numpy==2.4.4
 scipy==1.17.1
 scikit-learn==1.9.1
+torch==2.14.0
+torchinfo==1.8.0
+onnx==1.23.0
+onnxscript==0.7.2
+netron==9.2.9

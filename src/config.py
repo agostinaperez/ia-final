@@ -105,8 +105,16 @@ DROPOUT = 0.4 #en cada lote apaga al 40% de las neuronas al azar, así no se sob
 # Umbral de decisión de la clasificación binaria:
 #la red no devuelve un sí o un no, sino un valor entre 0 y 1, q es la probabilidad de q haya crisis. Si la probabilidad es mayor al
 #treshold, se considera q la red predijo crisis. Es ajustable para priorizar sensibilidad o especificidad
-THRESHOLD = 0.6
+THRESHOLD = 0.75
 
+# --- Fase 3: Dataset on-the-fly + caché LRU ---
+# Archivos EDF en la caché RAM (cada archivo procesado ≈ 118 MB float32 → 8 ≈ ~944 MB).
+CACHE_MAX_FILES = 8
+# Presupuesto máximo de RAM en bytes para la caché (~1 GiB).
+CACHE_MAX_BYTES = CACHE_MAX_FILES * 128 * 1024 * 1024  # 1073741824 bytes ≈ 1 GiB
+# Workers del DataLoader (0 = proceso único, recomendado para desarrollo).
+# Subir (ej. 4) para ocultar latencia del preprocesamiento bajo el forward de la GPU.
+NUM_WORKERS = 0
 
 # Arquitectura CNN-1D. se usa por model.py
 # Filtros (canales) por cada bloque Conv1D.

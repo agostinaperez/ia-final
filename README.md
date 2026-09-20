@@ -3,6 +3,14 @@
 ## 1. Definición del Problema
 La inspección visual de registros de electroencefalogramas (EEG) resulta un proceso complejo y demandante para los neurólogos debido a la magnitud de los datos en monitoreos continuos. El objetivo es implementar una arquitectura de Inteligencia Artificial (Red Neuronal Convolucional o CNN 1D) capaz de clasificar ventanas temporales de señales crudas de EEG para diferenciar automáticamente entre períodos de crisis (actividad ictal) frente a períodos de actividad normal (basal).
 
+### 1.1. Formulación del agente según el framework PEAS
+Para especificar formalmente al agente, se utiliza el framework PEAS, y se define:
+
+- **Performance**: clasificar correctamente cada ventana temporal de EEG como "crisis" o "no crisis". Se cuantifica con métricas clínicas como Sensibilidad (Recall), Especificidad y Tasa de Falsas Alarmas (FPR). El objetivo es maximizar la sensibilidad manteniendo el FPR bajo.
+- **Environment**: el contexto clínico de monitoreo EEG continuo. Está constituido por la actividad eléctrica cerebral del paciente, captada en canales a 256 Hz (la cantidad de canales se normaliza a 16 al momento de preprocesar, y los mismos se estandarizan en canales bipolares), junto con el ruido y los artefactos propios del registro. Es un entorno no estacionario, parcialmente observable (la señal cruda incluye ruido/artefactos que ocultan la señal útil) y con alto volumen de datos.
+- **Actuators**: el agente no actúa físicamente sobre el paciente; es un sistema de apoyo a la decisión. Su acción es emitir la clasificación binaria (crisis / no crisis) y, en un despliegue real, generar una alarma o aviso al personal médico cuando se detecta una crisis.
+- **Sensors**: los electrodos del montaje, que miden diferencias de potencial sobre el cuero cabelludo. La señal cruda de estos sensores, digitalizada a 256 Hz y filtrada en 0.5–50 Hz, es la entrada que percibe el modelo.
+
 ## 2. Origen y Naturaleza de los Datos
 Se utiliza un dataset clínico de dominio público perteneciente al Hospital Infantil de Boston (CHB) en colaboración con el MIT, conformando el CHB-MIT Scalp EEG Database(https://physionet.org/content/chbmit/1.0.0/).
 Estas son señales temporales continuas, altamente no estacionarias y afectadas por múltiples tipos de artefactos.

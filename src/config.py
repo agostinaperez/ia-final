@@ -86,6 +86,9 @@ SPLIT_W_ZSEC = 2.0
 # Hiperparámetros de entrenamiento
 # Optimizador AdamW: ajuste adaptativo por peso + decaimiento de pesos (regularización contra overfitting). Learning rate de arranque.
 LEARNING_RATE = 3e-4
+# Weight decay del AdamW: penaliza pesos grandes (regularización L2). En AdamW se aplica "desacoplado" del momento adaptativo (a diferencia del Adam clásico)
+# 1e-2 es el default de PyTorch; se puede bajar a 1e-4 si se nota underfitting.
+WEIGHT_DECAY = 1e-2
 # Batch: cantidad de ventanas que ve la red antes de cada paso de gradiente.
 BATCH_SIZE = 64
 # Máximo de épocas (una época = 1 pasada por todas las ventanas muestreadas).
@@ -93,12 +96,12 @@ EPOCHS = 40
 # Early stopping: cortar si la pérdida de validación no mejora en 8 épocas.
 PATIENCE = 8
 # Para entrenamiento con 1 sola GPU / CPU (evita warning de torch).
-DEVICE = "cpu"  # será "cuda" en Colab (se setea al entrenar).
+DEVICE = "cuda"  # será "cuda" en Colab (se setea al entrenar).
 
 # Estrategia de desbalance (train)
 # Ratios de negative:positive en cada batch de train.
-# Ej: 3 => 3 ventanas no-crisis por cada ventana de crisis.
-NEG_POS_RATIO = 3
+# Ej: 4 => 4 ventanas no-crisis por cada ventana de crisis.
+NEG_POS_RATIO = 4
 # Dropout para regularización del modelo.
 DROPOUT = 0.4 #en cada lote apaga al 40% de las neuronas al azar, así no se sobreajusta
 
@@ -107,13 +110,7 @@ DROPOUT = 0.4 #en cada lote apaga al 40% de las neuronas al azar, así no se sob
 #treshold, se considera q la red predijo crisis. Es ajustable para priorizar sensibilidad o especificidad
 THRESHOLD = 0.75
 
-# --- Fase 3: Dataset on-the-fly + caché LRU ---
-# Archivos EDF en la caché RAM (cada archivo procesado ≈ 118 MB float32 → 8 ≈ ~944 MB).
-CACHE_MAX_FILES = 8
-# Presupuesto máximo de RAM en bytes para la caché (~1 GiB).
-CACHE_MAX_BYTES = CACHE_MAX_FILES * 128 * 1024 * 1024  # 1073741824 bytes ≈ 1 GiB
-# Workers del DataLoader (0 = proceso único, recomendado para desarrollo).
-# Subir (ej. 4) para ocultar latencia del preprocesamiento bajo el forward de la GPU.
+# Workers del DataLoader (0 = proceso único)
 NUM_WORKERS = 0
 
 # Arquitectura CNN-1D. se usa por model.py

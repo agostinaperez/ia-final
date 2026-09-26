@@ -591,9 +591,8 @@ def main() -> None:
     data_dir = Path(args.data_dir)
     if not data_dir.is_dir():
         sys.exit(f"--data-dir no es válido: {data_dir}")
-    
-    #este es el único q uso en prod
-    elif args.compute_stats:
+
+    if args.compute_stats:
         patients = args.patients.split(",") if args.patients else None
         compute_stats(data_dir, Path(args.split_file), args.limit, patients)
 

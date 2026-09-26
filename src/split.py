@@ -26,7 +26,6 @@ from src.config import (
     DATASET_DIR,
     N_VAL_PATIENTS,
     PROCESSED_DIR,
-    SEED,
     SPLIT_W_ZSEC,
     TEST_RATIO,
 )
@@ -119,13 +118,13 @@ def pick_validation(train_patients: list[str], stats: list[dict], n_val: int = N
     # Ordenar los train por severidad ascendente (menos crisis -> más crisis).
     train_sorted = sorted(train_patients, key=lambda p: sev.get(p, 0))
 
-    # Elegimos las posiciones "centrales" (1/3 y 2/3 del orden) evitando extremos, y sin repetición.
+    # Elegimos posiciones "centrales" repartidas uniformemente a lo largo del orden, evitando extremos y sin repetición
     assert len(train_sorted) > n_val, (
         "Se necesitan más pacientes de train que " f"{n_val} para reservar validación."
     )
-    idx = [len(train_sorted) // 3, (2 * len(train_sorted)) // 3]
+    idx = [(k * len(train_sorted)) // (n_val + 1) for k in range(1, n_val + 1)]
 
-    # Tomamos solo las primeras n_val posiciones centrales disponibles.
+    # Tomamos las n_val posiciones centrales disponibles.
     val = [train_sorted[i] for i in idx if i < len(train_sorted)]
     return val[:n_val]
 
@@ -135,7 +134,7 @@ def build_split(data_dir: Path | str = DATASET_DIR) -> dict:
     Ejecuta el pipeline completo del split y devuelve el diccionario-resumen.
 
     El diccionario contiene:
-      - data_dir, seed, ratios
+      - data_dir, ratios
       - train / val / test: listas de pacientes
       - patients: detalle por paciente (split + stats)
       - resumen_volumen: fracciones logradas para control de proporcionalidad
@@ -186,7 +185,6 @@ def build_split(data_dir: Path | str = DATASET_DIR) -> dict:
     total_zsec = sum(s["seizure_seconds"] for s in stats)
     summary = {
         "data_dir": str(data_dir),
-        "seed": SEED,
         "test_ratio_solicitado": TEST_RATIO,
         "n_train": len(train_eff),
         "n_val": len(val),

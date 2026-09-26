@@ -22,8 +22,6 @@ DATASET_DIR = Path(os.environ.get("CHBMIT_DIR", r"C:/Users/Usuario/tesis/physion
 
 # Stats del estandarizador por canal
 SCALER_STATS_FILE = PROCESSED_DIR / "scaler_stats.npz"
-# Reporte de preprocesado
-PROCESSING_REPORT_FILE = PROCESSED_DIR / "processing_report.json"
 
 # Señal y segmentación
 # Frecuencia de muestreo en Hz
@@ -71,7 +69,6 @@ SEED = 42
 
 # Split por paciente (inter-paciente, 70/30 proporcional)
 TEST_RATIO = 0.30
-TRAIN_RATIO = 1.0 - TEST_RATIO
 N_VAL_PATIENTS = 2 # Cantidad de pacientes que se reservan de train para VALIDACIÓN.
 
 # Peso relativo de los SEGUNDOS DE CRISIS frente a los ARCHIVOS en el reparto
@@ -83,8 +80,9 @@ N_VAL_PATIENTS = 2 # Cantidad de pacientes que se reservan de train para VALIDAC
 # Valor 1.0 = test con muchas horas pero pocas crisis (0.314/0.129).
 SPLIT_W_ZSEC = 2.0
 
-# Hiperparámetros de entrenamiento
-# Optimizador AdamW: ajuste adaptativo por peso + decaimiento de pesos (regularización contra overfitting). Learning rate de arranque.
+# Hiperparámetros de entrenamiento:-----------------------------------------------------------------------
+
+#learning rate inicial. Yo uso optimizador AdamW por ende el learning rate es de tasa adaptativa, el de cada peso se va recalculando y ajustando
 LEARNING_RATE = 3e-4
 # Weight decay del AdamW: penaliza pesos grandes (regularización L2). En AdamW se aplica "desacoplado" del momento adaptativo (a diferencia del Adam clásico)
 # 1e-2 es el default de PyTorch; se puede bajar a 1e-4 si se nota underfitting.
@@ -94,13 +92,9 @@ BATCH_SIZE = 64
 # Máximo de épocas (una época = 1 pasada por todas las ventanas muestreadas).
 EPOCHS = 40
 # Early stopping: cortar si la pérdida de validación no mejora en 8 épocas.
-PATIENCE = 8
-# Para entrenamiento con 1 sola GPU / CPU (evita warning de torch).
-DEVICE = "cuda"  # será "cuda" en Colab (se setea al entrenar).
+PATIENCE = 5
 
-# Estrategia de desbalance (train)
-# Ratios de negative:positive en cada batch de train.
-# Ej: 4 => 4 ventanas no-crisis por cada ventana de crisis.
+# Ratios de negative:positive en cada batch de train.Ej: 4 => 4 ventanas no-crisis por cada ventana de crisis.
 NEG_POS_RATIO = 4
 # Dropout para regularización del modelo.
 DROPOUT = 0.4 #en cada lote apaga al 40% de las neuronas al azar, así no se sobreajusta
@@ -108,8 +102,8 @@ DROPOUT = 0.4 #en cada lote apaga al 40% de las neuronas al azar, así no se sob
 # Umbral de decisión de la clasificación binaria:
 #la red no devuelve un sí o un no, sino un valor entre 0 y 1, q es la probabilidad de q haya crisis. Si la probabilidad es mayor al
 #treshold, se considera q la red predijo crisis. Es ajustable para priorizar sensibilidad o especificidad
-THRESHOLD = 0.75
-
+THRESHOLD = 0.9
+#--------------------------------------------------------------------------------------------------------------------
 # Workers del DataLoader (0 = proceso único)
 NUM_WORKERS = 0
 
